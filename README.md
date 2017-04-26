@@ -21,6 +21,8 @@ or
 Cover the 2 predefined acceptance criteria
 
 ## Additional acceptance criteria
--
--
-Cover the 2 additional acceptance criteria
+- testSignInWithValidCredentials:
+        - When a customers logs in with valid credentials on the web site, then the your account screen is displayed
+- testCreateAnAccount:
+        - When a customers is on the sign page, then they can choose to create a account and enter details
+These are the 2 additional acceptance criteria
