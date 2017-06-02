@@ -16,33 +16,42 @@ import java.util.concurrent.TimeUnit;
 public class MainTest {
 
     WebDriver driver;
+    ChromeDriverContainer chromeDriverContainer;
     private int DEFAULT_TIMEOUT = 10;
+
+    final String SEARCH_BUTTON_ID = "menu-item-search";
+    final String SEARCH_BOX_ID = "search-box";
+    final String SEARCH_BOX_BUTTON_ID = "search-btn";
+
+    final String SUCESS_SEARCH = "birthday";
+    final String FAIL_SEARCH = "sdjfnjsdfj";
 
     @Before
     public void setUp() throws Exception {
-        System.setProperty("webdriver.chrome.driver", "/Users/jasondobo/Downloads/chromedriver");
-        driver = new ChromeDriver();
+//        System.setProperty("webdriver.chrome.driver", "/Users/jason.dobo/Downloads/chromedriver");
+//        driver = new ChromeDriver();
+        chromeDriverContainer = new ChromeDriverContainer();
+        driver = chromeDriverContainer.getDriver();
 
-        driver.get("https://www.moo.com/uk/");
-        handleNewsLetterOverlay();
+        driver.get("https://www.moonpig.com");
     }
 
     @After
     public void tearDown() throws Exception {
         driver.quit();
+
     }
 
-    // 1. When a customer searches for a valid product on the website, they should see a view of
-    // products matching that search term - example: business cards
     @Test
     public void testSuccessfulSearchForProducts() {
-        enterSearchString("business cards");
-        pressSearchButton();
+        WebElement element = tryWaitForElement(ExpectedConditions.elementToBeClickable(By.id(SEARCH_BUTTON_ID)));
+        element.click();
 
-        waitForVisibilityOfElement(By.className("gsc-results"));
-        waitForInvisibilityOfElement(By.className("gs-no-results-result"));
-        List<WebElement> results = driver.findElements(By.className("gsc-result"));
-        Assert.assertTrue(results.size() > 0);
+        element = tryWaitForElement(ExpectedConditions.visibilityOfElementLocated(By.id(SEARCH_BOX_ID)));
+        element.sendKeys(SUCESS_SEARCH);
+
+        element = tryWaitForElement(ExpectedConditions.elementToBeClickable(By.id(SEARCH_BOX_BUTTON_ID)));
+        element.click();
     }
 
     // 2. When a customer searches for an invalid product on the website, they should receive a
@@ -94,24 +103,6 @@ public class MainTest {
 
         WebElement btnSignup = waitToBeClickableForElement(By.id("btnSignup"));
 //        btnSignup.click(); As I do not want to create multiple accounts on a live system I've disabled this part of the test
-    }
-
-    // Action helpers
-    private void handleNewsLetterOverlay() {
-        tryWaitForElement(ExpectedConditions.elementToBeClickable(By.className("close")), 30);
-        List<WebElement> closeButtons = driver.findElements(By.className("close"));
-
-        for (WebElement element : closeButtons) {
-            String attribute = element.getAttribute("data-webdriver-automation-id");
-            if (attribute.equalsIgnoreCase("newsletter-overlay-close-link")) {
-                System.out.println("DEBUG: About to dismiss news letter overlay");
-                element.click();
-
-                Boolean close = waitForInvisibilityOfElement(By.className("close"));
-                Assert.assertTrue(close);
-                break;
-            }
-        }
     }
 
     private void findSignupOption() {
@@ -178,6 +169,22 @@ public class MainTest {
     }
 
     // Element finders and checkers
+    private WebElement tryWaitForElement(ExpectedCondition<WebElement> condition) {
+        return tryWaitForElement(condition, 5);
+    }
+
+    private WebElement tryWaitForElement(ExpectedCondition<WebElement> condition, int seconds) {
+        WebElement element = null;
+
+        try {
+            element = fluentWait(seconds).until(condition);
+        } catch (TimeoutException e) {
+            System.out.println("Try find element " + condition.toString() + ", not found");
+        }
+
+        return element;
+    }
+
     private Wait<WebDriver> fluentWait(long timeout) {
         return new FluentWait<>(driver)
                 .withTimeout(timeout, TimeUnit.SECONDS)
@@ -206,18 +213,6 @@ public class MainTest {
         } else {
             return element;
         }
-    }
-
-    private WebElement tryWaitForElement(ExpectedCondition<WebElement> condition, int seconds) {
-        WebElement element = null;
-
-        try {
-            element = fluentWait(seconds).until(condition);
-        } catch (TimeoutException e) {
-            System.out.println("Try find element " + condition.toString() + ", not found");
-        }
-
-        return element;
     }
 
     private boolean waitForInvisibilityOfElement(By by) {
