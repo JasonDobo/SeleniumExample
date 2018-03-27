@@ -1,15 +1,24 @@
 import interfaces.IDriverContainer;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-/**
- * Created by jason.dobo on 10/05/2017.
- */
 public class ChromeDriverContainer implements IDriverContainer {
 
-    ChromeDriver driver = null;
+    private static ChromeDriverContainer instance = null;
+    private static ChromeDriver driver = null;
+
+    public static WebDriver webDriver = null;
 
     public ChromeDriverContainer() {
         driver = getDriver();
+    }
+
+    static ChromeDriverContainer getInstance() {
+        if (instance == null) {
+            instance = new ChromeDriverContainer();
+        }
+
+        return instance;
     }
 
     public ChromeDriver getDriver() {
