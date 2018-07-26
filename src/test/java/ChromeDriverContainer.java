@@ -23,7 +23,7 @@ public class ChromeDriverContainer implements IDriverContainer {
 
     public ChromeDriver getDriver() {
         if (driver == null) {
-            System.setProperty("webdriver.chrome.driver", "/Users/jason.dobo/Downloads/chromedriver");
+            System.setProperty("webdriver.chrome.driver", "./src/test/resources/drivers/chromedriver");
             driver = new ChromeDriver();
         }
 

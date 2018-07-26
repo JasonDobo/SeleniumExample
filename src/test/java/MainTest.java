@@ -3,7 +3,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -24,12 +23,9 @@ public class MainTest {
     final String SEARCH_BOX_BUTTON_ID = "search-btn";
 
     final String SUCESS_SEARCH = "birthday";
-    final String FAIL_SEARCH = "sdjfnjsdfj";
 
     @Before
-    public void setUp() throws Exception {
-//        System.setProperty("webdriver.chrome.driver", "/Users/jason.dobo/Downloads/chromedriver");
-//        driver = new ChromeDriver();
+    public void setUp() {
         chromeDriverContainer = new ChromeDriverContainer();
         driver = chromeDriverContainer.getDriver();
 
@@ -37,7 +33,7 @@ public class MainTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         driver.quit();
 
     }
